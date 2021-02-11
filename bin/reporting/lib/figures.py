@@ -10,27 +10,31 @@ import seaborn as sb
 import plotly.express as px
 
 class Figures:
-    data_table = None
+    meta_table = None
+    fragments_table = None
 
-    def __init__(self, logger, data):
+    def __init__(self, logger, meta_data, fragments_data):
         self.logger = logger
-        self.data_path = data
+        self.meta_path = meta_data
+        self.fragments_path = fragments_data
 
     def load_data(self):
-        self.data_table = pd.read_csv(self.data_path, sep=',')
+        self.meta_table = pd.read_csv(self.meta_path, sep=',')
+        self.fragments_table = pd.read_csv(self.fragments_path, sep='\t')
 
     def return_data(self):
         self.load_data()
         self.annotate_data()
-        return(self.data_table)
+        filtered_meta_data = self.meta_table[['bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate']]
+        return(filtered_meta_data, self.fragments_table)
 
     def annotate_data(self):
         # Make new perctenage alignment columns
-        self.data_table['target_alignment_rate'] = self.data_table.loc[:, ('bt2_total_aligned_target')] / self.data_table.loc[:, ('bt2_total_reads_target')] * 100
-        self.data_table['spikein_alignment_rate'] = self.data_table.loc[:, ('bt2_total_aligned_spikein')] / self.data_table.loc[:, ('bt2_total_reads_spikein')] * 100
-        # self.data_table.describe()
-        # print(self.data_table)
-        # self.data_table.info()
+        self.meta_table['target_alignment_rate'] = self.meta_table.loc[:, ('bt2_total_aligned_target')] / self.meta_table.loc[:, ('bt2_total_reads_target')] * 100
+        self.meta_table['spikein_alignment_rate'] = self.meta_table.loc[:, ('bt2_total_aligned_spikein')] / self.meta_table.loc[:, ('bt2_total_reads_spikein')] * 100
+        # self.meta_table.describe()
+        # print(self.meta_table)
+        # self.meta_table.info()
 
     def generate_plots(self):
         # Init
@@ -105,11 +109,14 @@ class Figures:
         self.annotate_data()
 
         # Subset data 
-        df_data = self.data_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
 
         fig = px.box(df_data, x=x_axis, y=y_axis)
 
         return fig
+
+    # def remove_meta_items(self, items):
+    #     self.meta_table.drop(columns = items)
 
 
 
@@ -119,7 +126,7 @@ class Figures:
     # ---------- Plot 1 - Alignment Summary --------- #
     def alignment_summary(self):
         # Subset data 
-        df_data = self.data_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
 
         ## Construct quad plot
         fig, seq_summary = plt.subplots(2,2)
@@ -151,7 +158,7 @@ class Figures:
 
     def alignment_summary_reads_target(self):
         # Subset data 
-        df_data = self.data_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
 
         fig = px.box(df_data, x="group", y="bt2_total_reads_target")
 
@@ -160,11 +167,14 @@ class Figures:
 
     def alignment_summary_reads_aligned(self):
         # Subset data 
-        df_data = self.data_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
 
         fig = px.box(df_data, x="group", y="bt2_total_aligned_target")
 
         return fig, df_data
+
+    def frag_len_line_graph(self):
+
 
         
 # import glob

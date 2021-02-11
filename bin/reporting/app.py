@@ -15,11 +15,9 @@ app.config.suppress_callback_exceptions = True
 
 # Init data
 figures = Figures(None, "data/meta_table.csv")
-
+meta, fragments = figures.return_data()
 
 # data = Figures.load_data("data/meta_table.csv")
-
-cats =  [item for item in figures.return_data().columns if item in ['bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate']]
 
 # figs, data = figures.generate_dash_plots()
 
@@ -33,9 +31,21 @@ app.layout = html.Div(
                 html.H5("Select Metric"),
                 dcc.Dropdown(
                     id='cat-dropdown',
-                    options=[{'label': i, 'value': i} for i in cats],
-                    value=cats[0]
+                    options=[{'label': i, 'value': i} for i in meta.columns],
+                    value=meta.columns[0]
                 ),
+                dcc.Graph(
+                    id='box-plot',
+                )
+            ]),
+        html.Div([
+                html.H4("Fragment Length Distribution"),
+                html.H5("Select Metric"),
+                # dcc.Dropdown(
+                #     id='cat-dropdown',
+                #     options=[{'label': i, 'value': i} for i in meta.columns],
+                #     value=meta.columns[0]
+                # ),
                 dcc.Graph(
                     id='box-plot',
                 )
