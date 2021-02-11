@@ -9,6 +9,7 @@ from matplotlib.backends.backend_pdf import PdfPages
 import seaborn as sb
 import plotly.express as px
 
+
 class Figures:
     meta_table = None
     fragments_table = None
@@ -17,6 +18,18 @@ class Figures:
         self.logger = logger
         self.meta_path = meta_data
         self.fragments_path = fragments_data
+    
+    def list_beds(self):
+        merged_peak_data = []
+        for file in os.listdir("./"):
+            if file.endswith(".bed"):
+                peak_data = pd.read_csv(file, sep='\t')
+                peak_data['Sample'] = file.split('.')[0].split('_')[0]
+                peak_data['Replicate'] = file.split('.')[0].split('_')[1]
+                merged_peak_data.append(peak_data)
+        merged_peak_data = pd.concat(merged_peak_data)
+        return(merged_peak_data)
+        
 
     def load_data(self):
         self.meta_table = pd.read_csv(self.meta_path, sep=',')
@@ -25,7 +38,7 @@ class Figures:
     def return_data(self):
         self.load_data()
         self.annotate_data()
-        filtered_meta_data = self.meta_table[['bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate']]
+        filtered_meta_data = self.meta_table[['bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate', 'scale_factor']]
         return(filtered_meta_data, self.fragments_table)
 
     def annotate_data(self):
@@ -109,11 +122,12 @@ class Figures:
         self.annotate_data()
 
         # Subset data 
-        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+        df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate', 'scale_factor')]
 
         fig = px.box(df_data, x=x_axis, y=y_axis)
 
         return fig
+
 
     def generate_frag_plots(self):
     
@@ -129,7 +143,7 @@ class Figures:
 
         fragments = fragments.sort_values(by="Length")
 
-        fig = px.line(fragments, y="Frequency", x="Length", color="Sample", line_group="Replicate")
+        fig = px.line(fragments, y="Frequency", x="Length", color="Sample", line_dash="Replicate")
 
         return(fig)
 
