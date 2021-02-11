@@ -14,11 +14,25 @@ class Figures:
     meta_table = None
     fragments_table = None
 
-    def __init__(self, logger, meta_data, fragments_data):
+    def __init__(self, logger, meta_data, fragments_data, base_dir):
         self.logger = logger
         self.meta_path = meta_data
         self.fragments_path = fragments_data
+        self.base_path = base_dir
 
+
+    def list_beds(self):
+        merged_peak_data = []
+        for file in os.listdir(self.base_path):
+            if file.endswith(".bed"):
+                peak_data = pd.read_csv(self.base_path + file, sep='\t', names=['chrom', 'start', 'end', 'prob', "test1", "test2"])
+                peak_data['Sample'] = file.split('.')[0].split('_')[0]
+                peak_data['Replicate'] = file.split('.')[0].split('_')[1]
+                merged_peak_data.append(peak_data)
+
+        merged_peak_data = pd.concat(merged_peak_data)
+        merged_peak_data['width'] = merged_peak_data['end'] - merged_peak_data['start']
+        self.merged_peak_data = merged_peak_data
         
 
     def load_data(self):
@@ -122,6 +136,15 @@ class Figures:
         fig = px.line(fragments, y="Frequency", x="Length", color="Sample", line_dash="Replicate")
 
         return(fig)
+
+    def generate_peak_width(self):
+    
+        self.list_beds()
+
+        fig = px.violin(self.merged_peak_data, x = "Sample", y = "width", color="Sample")
+
+        return(fig)
+
 
 
     ##### PLOTS #####

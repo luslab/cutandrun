@@ -14,13 +14,12 @@ app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTST
 app.config.suppress_callback_exceptions = True
 
 # Init data
-figures = Figures(None, "data/meta_table.csv", "data/frags.csv")
+figures = Figures(None, "data/meta_table.csv", "data/frags.csv", "data/")
 
 
 meta, fragments = figures.return_data()
 
-figs, data = figures.generate_dash_plots()
-
+# figs, data = figures.generate_dash_plots()
 
 app.layout = html.Div(
     children=[
@@ -43,6 +42,14 @@ app.layout = html.Div(
                 dcc.Graph(
                     id='violin-plot',
                     figure=figures.generate_frag_plots()
+                )
+            ]),
+        html.Div([
+                html.H4("Peak Width Distribution"),
+
+                dcc.Graph(
+                    id='violin-peaks',
+                    figure=figures.generate_peak_width()
                 )
             ])
     ]
