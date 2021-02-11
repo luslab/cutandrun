@@ -18,17 +18,7 @@ class Figures:
         self.logger = logger
         self.meta_path = meta_data
         self.fragments_path = fragments_data
-    
-    def list_beds(self):
-        merged_peak_data = []
-        for file in os.listdir("./"):
-            if file.endswith(".bed"):
-                peak_data = pd.read_csv(file, sep='\t')
-                peak_data['Sample'] = file.split('.')[0].split('_')[0]
-                peak_data['Replicate'] = file.split('.')[0].split('_')[1]
-                merged_peak_data.append(peak_data)
-        merged_peak_data = pd.concat(merged_peak_data)
-        return(merged_peak_data)
+
         
 
     def load_data(self):
@@ -45,9 +35,6 @@ class Figures:
         # Make new perctenage alignment columns
         self.meta_table['target_alignment_rate'] = self.meta_table.loc[:, ('bt2_total_aligned_target')] / self.meta_table.loc[:, ('bt2_total_reads_target')] * 100
         self.meta_table['spikein_alignment_rate'] = self.meta_table.loc[:, ('bt2_total_aligned_spikein')] / self.meta_table.loc[:, ('bt2_total_reads_spikein')] * 100
-        # self.meta_table.describe()
-        # print(self.meta_table)
-        # self.meta_table.info()
 
     def generate_plots(self):
         # Init
@@ -78,11 +65,6 @@ class Figures:
         plot1, data1 = self.alignment_summary_reads_target()
         plots["alignment_summary_reads_target"] = plot1
         data["alignment_summary_reads_target"] = data1
-
-        # # Plot 2
-        # plot2, data2 = self.alignment_summary_reads_aligned()
-        # plots["alignment_summary_reads_aligned"] = plot2
-        # data["alignment_summary_reads_aligned"] = data2
 
         return (plots, data)
 
@@ -135,29 +117,11 @@ class Figures:
 
         fragments = self.fragments_table
 
-        # expand fragment length by frequency
-        # fragments = fragments.loc[fragments.index.repeat(fragments['Frequency'])]
-
-        # drop frequency column
-        # fragments = fragments.drop(columns = "Frequency")
-
         fragments = fragments.sort_values(by="Length")
 
         fig = px.line(fragments, y="Frequency", x="Length", color="Sample", line_dash="Replicate")
 
         return(fig)
-
-        # # Subset data 
-        # df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
-
-        # fig = px.box(df_data, x=x_axis, y=y_axis)
-
-        # return fig
-
-    # def remove_meta_items(self, items):
-    #     self.meta_table.drop(columns = items)
-
-
 
 
     ##### PLOTS #####
