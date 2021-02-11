@@ -14,7 +14,9 @@ app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTST
 app.config.suppress_callback_exceptions = True
 
 # Init data
-figures = Figures(None, "data/meta_table.csv")
+figures = Figures(None, "data/meta_table.csv", "data/frags.csv")
+
+
 meta, fragments = figures.return_data()
 
 # data = Figures.load_data("data/meta_table.csv")
@@ -40,14 +42,15 @@ app.layout = html.Div(
             ]),
         html.Div([
                 html.H4("Fragment Length Distribution"),
-                html.H5("Select Metric"),
+                # html.H5("Select Metric"),
                 # dcc.Dropdown(
                 #     id='cat-dropdown',
                 #     options=[{'label': i, 'value': i} for i in meta.columns],
                 #     value=meta.columns[0]
                 # ),
                 dcc.Graph(
-                    id='box-plot',
+                    id='violin-plot',
+                    figure=figures.generate_frag_plots()
                 )
             ])
         # dcc.Graph(
@@ -67,6 +70,16 @@ app.layout = html.Div(
 def update_boxplot(cat):
     fig = figures.generate_box_plot(x_axis="group", y_axis=cat)
     return fig
+
+# @app.callback(
+#     dash.dependencies.Output('violin-plot', 'figure'),
+#     # dash.dependencies.Input('cat-dropdown', 'value')
+# )
+# def update_boxplot(cat):
+#     fig = figures.generate_box_plot(x_axis="group", y_axis=cat)
+#     return fig
+
+    
 
 
 if __name__ == "__main__":

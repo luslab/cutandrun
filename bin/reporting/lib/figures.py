@@ -115,6 +115,31 @@ class Figures:
 
         return fig
 
+    def generate_frag_plots(self):
+    
+        self.load_data()
+
+        fragments = self.fragments_table
+
+        # expand fragment length by frequency
+        # fragments = fragments.loc[fragments.index.repeat(fragments['Frequency'])]
+
+        # drop frequency column
+        # fragments = fragments.drop(columns = "Frequency")
+
+        fragments = fragments.sort_values(by="Length")
+
+        fig = px.line(fragments, y="Frequency", x="Length", color="Sample", line_group="Replicate")
+
+        return(fig)
+
+        # # Subset data 
+        # df_data = self.meta_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+
+        # fig = px.box(df_data, x=x_axis, y=y_axis)
+
+        # return fig
+
     # def remove_meta_items(self, items):
     #     self.meta_table.drop(columns = items)
 
@@ -172,8 +197,6 @@ class Figures:
         fig = px.box(df_data, x="group", y="bt2_total_aligned_target")
 
         return fig, df_data
-
-    def frag_len_line_graph(self):
 
 
         
