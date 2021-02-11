@@ -23,7 +23,7 @@ app.layout = html.Div(
         html.Div(children="""Dash: A web application framework for Python."""),
         dcc.Graph(
             id='example-graph',
-            figure=figs["alignment_summary"]
+            figure=figs["alignment_summary_reads_target"]
         ),
     ]
 )
