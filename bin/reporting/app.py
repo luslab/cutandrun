@@ -17,16 +17,39 @@ app.config.suppress_callback_exceptions = True
 figures = Figures(None, "data/meta_table.csv")
 figs, data = figures.generate_dash_plots()
 
+cats = ["hello", "world"]
+
 app.layout = html.Div(
     children=[
         html.H1(children="Hello Dash 2020"),
         html.Div(children="""Dash: A web application framework for Python."""),
-        dcc.Graph(
-            id='example-graph',
-            figure=figs["alignment_summary_reads_target"]
-        ),
+        html.Div([
+                html.H4("Alignment Summary Metrics"),
+                html.H5("Select Metric"),
+                dcc.Dropdown(
+                    id='cat-dropdown',
+                    options=[{'label': i, 'value': i} for i in cats],
+                    value=cats[0]
+                ),
+                dcc.Graph(
+                    id='box-plot',
+                )
+            ])
+        # dcc.Graph(
+        #     id='example-graph',
+        #     figure=figs["alignment_summary_reads_target"]
+        # ),
     ]
 )
+
+# =========
+# Dynamic plotting
+# =========
+# @app.callback(
+#     dash.dependencies.Output('box-plot', 'figure'),
+#     dash.dependencies.Input('cat-dropdown', 'value')
+# )
+# def 
 
 if __name__ == "__main__":
     import os
