@@ -19,6 +19,8 @@ class Figures:
     def load_data(self):
         self.data_table = pd.read_csv(self.data_path, sep=',')
 
+    def return_data(self):
+        return(pd.read_csv(self.data_path, sep=','))
 
     def annotate_data(self):
         # Make new perctenage alignment columns
@@ -93,7 +95,21 @@ class Figures:
             #        d['Subject'] = 'How to create a multipage pdf file and set its metadata'
             # d['Keywords'] = 'PdfPages multipage keywords author title subject'
             # d['CreationDate'] = datetime.datetime(2009, 11, 13)
-            # d['ModDate'] = datetime.datetime.today()
+            # d['ModDate'] = datetime.datetime.today(
+
+    def generate_box_plot(self, x_axis, y_axis):
+
+        self.load_data()
+
+        # Subset data 
+        df_data = self.data_table.loc[:, ('id', 'group', 'bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate')]
+
+        fig = px.box(df_data, x=x_axis, y=y_axis)
+
+        return fig, df_data
+
+
+
 
     ##### PLOTS #####
 

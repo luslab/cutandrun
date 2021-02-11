@@ -14,10 +14,18 @@ app = dash.Dash(__name__, server=server, external_stylesheets=[dbc.themes.BOOTST
 app.config.suppress_callback_exceptions = True
 
 # Init data
-figures = Figures(None, "data/meta_table.csv")
-figs, data = figures.generate_dash_plots()
+figures = Figures(None, "data/meta/meta_table.csv")
 
-cats = ["hello", "world"]
+
+# data = Figures.load_data("data/meta_table.csv")
+
+print(figures.return_data().columns)
+
+cats =  [item for item in figures.return_data().columns if item in ['bt2_total_reads_target', 'bt2_total_aligned_target', 'target_alignment_rate', 'spikein_alignment_rate']]
+
+
+# figs, data = figures.generate_dash_plots()
+
 
 app.layout = html.Div(
     children=[
@@ -45,11 +53,14 @@ app.layout = html.Div(
 # =========
 # Dynamic plotting
 # =========
-# @app.callback(
-#     dash.dependencies.Output('box-plot', 'figure'),
-#     dash.dependencies.Input('cat-dropdown', 'value')
-# )
-# def 
+@app.callback(
+    dash.dependencies.Output('box-plot', 'figure'),
+    dash.dependencies.Input('cat-dropdown', 'value')
+)
+def update_boxplot(cat):
+    figures.generate_box_plot(x_axis="group", y_axis=cat)
+    return fig
+
 
 if __name__ == "__main__":
     import os
