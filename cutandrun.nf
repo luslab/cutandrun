@@ -551,9 +551,9 @@ workflow CUTANDRUN {
         ch_ordered_seacr_max
     )
 
-    DEEPTOOLS_PLOTHEATMAP_PEAKS (
-        DEEPTOOLS_COMPUTEMATRIX_PEAKS.out.matrix
-    )
+    // DEEPTOOLS_PLOTHEATMAP_PEAKS (
+    //     DEEPTOOLS_COMPUTEMATRIX_PEAKS.out.matrix
+    // )
 
 
     /*
